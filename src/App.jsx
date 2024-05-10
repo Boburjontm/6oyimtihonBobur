@@ -8,16 +8,30 @@ import ring from "../public/img/ring.svg";
 import settings from "../public/img/settings.svg";
 import quit from "../public/img/quit.svg";
 import Search from "../public/img/search.svg";
+import { AiOutlineDelete } from "react-icons/ai";
+import Payment from "../src/assets/components/Payment.jsx";
 
 const App = () => {
-  const [pizza, setPizza] = useState([]);
+  const [data, setData] = useState([]);
   const [formattedDate, setFormattedDate] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [orders, setOrders] = useState([]);
+  const [activeItem, setActiveItem] = useState(1);
+  const [activeItems, setActiveItems] = useState(1);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  const openModal = () => {
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
 
   useEffect(() => {
     fetch("https://663a97181ae792804befd66a.mockapi.io/Foods")
       .then((res) => res.json())
-      .then((data) => setPizza(data));
+      .then((data) => setData(data));
 
     const today = new Date();
     const options = {
@@ -34,9 +48,25 @@ const App = () => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredPizza = pizza.filter((food) =>
+  const filteredPizza = data.filter((food) =>
     food.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const addToOrders = (food) => {
+    const updatedOrders = [...orders, food];
+    setOrders(updatedOrders);
+  };
+
+  const removeFromOrders = (foodId) => {
+    setOrders(orders.filter((food) => food.id !== foodId));
+  };
+
+  const calculateTotalPrice = () => {
+    return orders.reduce(
+      (total, food) => total + food.price * food.quantity,
+      0
+    );
+  };
 
   return (
     <div className="flex">
@@ -110,23 +140,65 @@ const App = () => {
             </div>
           </div>
           <div className="fixed mt-20 navbar  bg-[#252836] w-[69.2%] border-b border-[#393C49] z-20">
-            <ul className="flex justify-left gap-12 mt-4 mx-8">
-              <li className="text-white cursor-pointer hover:text-[#EA7C69] hover:border-b-2 hover:border-b-[#EA7C69] pb-4 transition-">
+            <ul className=" flex justify-left gap-12 mt-4 mx-8">
+              <li
+                className={`${
+                  activeItem === 1
+                    ? "text-[#EA7C69] text-[15px] font-sans font-semibold border-bottom border-b-2  hover:border-b-[#EA7C69] border-b-[#EA7C69] pb-4 transition duration-700"
+                    : "text-[#fff] text-[15px] font-sans font-semibold hover:text-[#EA7C69] hover:border-b-2 hover:border-b-[#EA7C69] hover:pb-4 hover:transition duration-700  "
+                }`}
+                onClick={() => setActiveItem(1)}
+              >
                 Hot Dishes
               </li>
-              <li className="text-white cursor-pointer hover:text-[#EA7C69] hover:border-b-2 hover:border-b-[#EA7C69] pb-4 transition-">
+              <li
+                className={`${
+                  activeItem === 2
+                    ? "text-[#EA7C69] text-[15px] font-sans font-semibold border-bottom border-b-2  hover:border-b-[#EA7C69] border-b-[#EA7C69] pb-4 transition duration-700"
+                    : "text-[#fff] text-[15px] font-sans font-semibold hover:text-[#EA7C69] hover:border-b-2 hover:border-b-[#EA7C69] hover:pb-4 hover:transition duration-700  "
+                }`}
+                onClick={() => setActiveItem(2)}
+              >
                 Cold Dishes
               </li>
-              <li className="text-white cursor-pointer hover:text-[#EA7C69] hover:border-b-2 hover:border-b-[#EA7C69] pb-4 transition-">
+              <li
+                className={`${
+                  activeItem === 3
+                    ? "text-[#EA7C69] text-[15px] font-sans font-semibold border-bottom border-b-2  hover:border-b-[#EA7C69] border-b-[#EA7C69] pb-4 transition duration-700"
+                    : "text-[#fff] text-[15px] font-sans font-semibold hover:text-[#EA7C69] hover:border-b-2 hover:border-b-[#EA7C69] hover:pb-4 hover:transition duration-700  "
+                }`}
+                onClick={() => setActiveItem(3)}
+              >
                 Soup
               </li>
-              <li className="text-white cursor-pointer hover:text-[#EA7C69] hover:border-b-2 hover:border-b-[#EA7C69] pb-4 transition-">
+              <li
+                className={`${
+                  activeItem === 4
+                    ? "text-[#EA7C69] text-[15px] font-sans font-semibold border-bottom border-b-2  hover:border-b-[#EA7C69] border-b-[#EA7C69] pb-4 transition duration-700"
+                    : "text-[#fff] text-[15px] font-sans font-semibold hover:text-[#EA7C69] hover:border-b-2 hover:border-b-[#EA7C69] hover:pb-4 hover:transition duration-700  "
+                }`}
+                onClick={() => setActiveItem(4)}
+              >
                 Grill
               </li>
-              <li className="text-white cursor-pointer hover:text-[#EA7C69] hover:border-b-2 hover:border-b-[#EA7C69] pb-4 transition-">
+              <li
+                className={`${
+                  activeItem === 5
+                    ? "text-[#EA7C69] text-[15px] font-sans font-semibold border-bottom border-b-2  hover:border-b-[#EA7C69] border-b-[#EA7C69] pb-4 transition duration-700"
+                    : "text-[#fff] text-[15px] font-sans font-semibold hover:text-[#EA7C69] hover:border-b-2 hover:border-b-[#EA7C69] hover:pb-4 hover:transition duration-700  "
+                }`}
+                onClick={() => setActiveItem(5)}
+              >
                 Appetizer
               </li>
-              <li className="text-white cursor-pointer hover:text-[#EA7C69] hover:border-b-2 hover:border-b-[#EA7C69] pb-4 transition-">
+              <li
+                className={`${
+                  activeItem === 6
+                    ? "text-[#EA7C69] text-[15px] font-sans font-semibold border-bottom border-b-2  hover:border-b-[#EA7C69] border-b-[#EA7C69] pb-4 transition duration-700"
+                    : "text-[#fff] text-[15px] font-sans font-semibold hover:text-[#EA7C69] hover:border-b-2 hover:border-b-[#EA7C69] hover:pb-4 hover:transition duration-700  "
+                }`}
+                onClick={() => setActiveItem(6)}
+              >
                 Dessert
               </li>
             </ul>
@@ -141,9 +213,33 @@ const App = () => {
             id=""
             className="w-[15%] h-[36%] bg-[#1F1D2B] rounded-lg text-white mr-4"
           >
-            <option value="">Dine In</option>
-            <option value="">To Go</option>
-            <option value="">Delivery</option>
+            <option
+              className={`${
+                activeItems === 1 ? "text-[#EA7C69] " : "text-[#fff]"
+              }`}
+              value=""
+              onClick={() => setActiveItems(1)}
+            >
+              Dine In
+            </option>
+            <option
+              className={`${
+                activeItems === 2 ? "text-[#EA7C69] " : "text-[#fff]"
+              }`}
+              value=""
+              onClick={() => setActiveItems(2)}
+            >
+              To Go
+            </option>
+            <option
+              className={`${
+                activeItems === 3 ? "text-[#EA7C69] " : "text-[#fff]"
+              }`}
+              value=""
+              onClick={() => setActiveItems(3)}
+            >
+              Delivery
+            </option>
           </select>
         </div>
 
@@ -163,16 +259,133 @@ const App = () => {
                 {food.available} Bowls available
               </h2>
               <h3 className="text-center text-white">{food.price}$</h3>
+              <button
+                className="addorder hover:bg-[#EA7C69] text-white px-4 py-2 rounded"
+                onClick={() => addToOrders(food)}
+              >
+                Add to food
+              </button>
             </div>
           ))}
         </div>
       </div>
-      <div className="">
-        
+      <div className="sectionright bg-[#1F1D2B] w-[25%] mt-[-24px] ">
+        <div className="fixed  m-auto mt-[25px] bg-[#1F1D2B]  w-[25%] px-4">
+          <div>
+            <p className="font-semibold font-sans text-[22px] text-[#fff]">
+              Orders #34562{" "}
+            </p>
+          </div>
+          <div className="flex gap-[8px] mt-[25px]">
+            <ul className=" flex items-center gap-[8px]">
+              <li
+                className={`${
+                  activeItems === 1
+                    ? "flex items-center justify-center w-[80px] h-[43px] text-white text-[14px] font-sans font-semibold rounded-[8px] bg-[#EA7C69]"
+                    : "flex items-center justify-center w-[80px] h-[43px] text-[#ABBBC2] text-[14px] font-sans font-semibold rounded-[8px] border border-[#ABBBC2]"
+                }`}
+                onClick={() => setActiveItems(1)}
+              >
+                Dine In
+              </li>
+              <li
+                className={`${
+                  activeItems === 2
+                    ? "flex items-center justify-center w-[80px] h-[43px] text-white text-[14px] font-sans font-semibold rounded-[8px] bg-[#EA7C69]"
+                    : "flex items-center justify-center w-[80px] h-[43px] text-[#ABBBC2] text-[14px] font-sans font-semibold rounded-[8px] border border-[#ABBBC2]"
+                }`}
+                onClick={() => setActiveItems(2)}
+              >
+                To Go
+              </li>
+              <li
+                className={`${
+                  activeItems === 3
+                    ? "flex items-center justify-center w-[80px] h-[43px] text-white text-[14px] font-sans font-semibold rounded-[8px] bg-[#EA7C69]"
+                    : "flex items-center justify-center w-[80px] h-[43px] text-[#ABBBC2] text-[14px] font-sans font-semibold rounded-[8px] border border-[#ABBBC2]"
+                }`}
+                onClick={() => setActiveItems(3)}
+              >
+                Delivery
+              </li>
+            </ul>
+          </div>
+          <div className="flex justify-between text-[18px] text-[#fff] font-semibold font-sans mt-[25px] mx-2">
+            <p>Item</p>
+            <div className="flex gap-[50px]">
+              <p>Qty</p>
+              <p>Price</p>
+            </div>
+          </div>
+          <hr className="mt-[25px]" />
+        </div>
+        <div className="w-[360px] h-[53%] border-none m-auto overflow-scroll mt-56">
+          {data.map((food, index) => (
+            <div className="w-[100%] h-[125px] mt-5">
+              <div>
+                <div className="flex items-center">
+                  <div className="flex items-center w-[235px]">
+                    <img
+                      src={food.img}
+                      alt="img"
+                      className="w-[45px] h-[45px] rounded-[50%]"
+                    />
+                    <div className="ml-2">
+                      <h3 className="text-[14px] text-[#fff] font-sans font-medium">
+                        {food.name}
+                      </h3>
+                      <p className="text-[13px] text-[#ABBBC2] font-sans font-medium">
+                        {food.price}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="w-[120px] flex items-center justify-between ">
+                    <button className="flex justify-center items-center w-[50px] h-[50px] border border-[#393C49] bg-[#393C49] rounded-lg text-[16px] text-[#fff]">
+                      2
+                    </button>
+                    <h3 className="text-[16px] text-[#fff] font-sans font-medium">
+                      {food.price}
+                    </h3>
+                  </div>
+                </div>
+                <div className="flex justify-between mt-[8px]">
+                  <input
+                    type="text"
+                    placeholder="Order Note..."
+                    className="w-[285px] h-[50px] rounded-lg bg-[#393C49] outline-none p-[15px] text-[#E0E6E9]"
+                  />
+                  <button className="flex justify-center items-center w-[50px] h-[50px] border border-[#EA7C69] rounded-lg">
+                    <AiOutlineDelete className="w-[25px] h-[23px] text-[#EA7C69]" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="w-[360px] ml-auto mr-auto">
+          <hr />
+          <div className="flex justify-between mt-[25px]">
+            <p className=" font-normal text-[15px] text-[#ABBBC2]">Discount</p>
+            <p className=" font-medium text-[16px] text-[#fff]">$0</p>
+          </div>
+          <div className="flex justify-between mt-[18px]">
+            <p className=" font-normal text-[15px] text-[#ABBBC2]">Sub total</p>
+            <p className="font-medium text-[16px] text-[#fff]"> $ 320</p>
+          </div>
+          <div className="flex mt-[45px]">
+            <button
+              onClick={openModal}
+              className="w-[360px] h-[55px] bg-[#EA7C69] rounded-lg text-[15px] text-[#fff] font-semibold"
+            >
+              Continue to Payment
+            </button>
+          </div>
+          <div></div>
+        </div>
       </div>
+      {modalIsOpen && <Payment closeModal={closeModal} />}
     </div>
   );
 };
 
 export default App;
-    
